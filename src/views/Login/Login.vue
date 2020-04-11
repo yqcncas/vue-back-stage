@@ -1,10 +1,10 @@
 <template>
-    <div class="login">
+    <div class="login" >
         <div class="login-box">
             <div class="avatar-box">
                 <img :src="avatar" alt="">
             </div>
-            <el-form  label-width="80px" :model="loginForm" :rules="loginFormRules" ref="ruleForm" hide-required-asterisk = false>
+            <el-form  label-width="80px" :model="loginForm" :rules="loginFormRules" ref="ruleForm" :hide-required-asterisk = "false">
                 <el-form-item label="账号" prop="userName">
                     <el-input prefix-icon="el-icon-s-custom" v-model="loginForm.userName"></el-input>
                 </el-form-item>
@@ -26,6 +26,16 @@
 <script>
     export default {
         name: "login",
+        created() {
+            let that = this;
+            document.onkeypress = function(e) {
+                var keycode = document.all ? event.keyCode : e.which;
+                if (keycode == 13) {
+                    that.login();// 登录方法名
+                    return false;
+                }
+            };
+        },
         data () {
             return {
                 avatar: 'http://imgsrc.baidu.com/forum/w%3D580/sign=f480662e3cadcbef01347e0e9cae2e0e/8f5b1cd8bc3eb13517d8e851ab1ea8d3fc1f4489.jpg',
@@ -53,7 +63,7 @@
                 // 统一验证
                 this.$refs.ruleForm.validate(async (valid) => {
                     // 返回true false 通过则true
-                    // console.log(valid)】
+                    console.log(valid)
                     if (!valid) return
                     let {data: res} = await this.$axios.post('login', {username: this.loginForm.userName, password: this.loginForm.passWord})
                     let msg = res.meta.msg
