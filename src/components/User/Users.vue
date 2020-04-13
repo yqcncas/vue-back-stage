@@ -61,7 +61,7 @@
                             <el-button type="primary" icon="el-icon-edit" size = "small " @click="handleEditDialogFlag(scope.row.id)"></el-button>
                             <el-button type="danger" icon="el-icon-delete" size = "small" @click="deleteUserInfo(scope.row.id)"></el-button>
                             <el-tooltip  effect="dark" content="分配角色" placement="top" :enterable = "false">
-                                <el-button type="warning" icon="el-icon-setting" size = "small "></el-button>
+                                <el-button type="warning" icon="el-icon-setting" size = "small " @click="setRolesButton(scope.row)"></el-button>
                             </el-tooltip>
 
                         </template>
@@ -129,6 +129,35 @@
             <span slot="footer" class="dialog-footer">
                 <el-button @click="editUserInfoDialog = false">取 消</el-button>
                 <el-button type="primary" @click="editUserInfoButton">确 定</el-button>
+            </span>
+        </el-dialog>
+
+        <!-- 分配角色 -->
+        <el-dialog
+                title="分配角色"
+                :visible.sync="setRoleDigLog"
+                width="50%"
+                @close = "closeSetRolesDiaLog"
+               >
+            <span>
+                <div>
+                    <p>当前用户:  {{userInfo.username}}</p>
+                    <p>用户级别:  {{userInfo.role_name}}</p>
+                    <p>分配新角色:
+                          <el-select v-model="selectRoleId" placeholder="请选择">
+                            <el-option
+                                    v-for="item in rolesList"
+                                    :key="item.id"
+                                    :label="item.roleName"
+                                    :value="item.id">
+                            </el-option>
+                          </el-select>
+                    </p>
+                </div>
+            </span>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="setRoleDigLog = false">取 消</el-button>
+                <el-button type="primary" @click="saveRoleInfoButton">确 定</el-button>
             </span>
         </el-dialog>
 
@@ -200,7 +229,11 @@
                     username: '',
                     mobile: '',
                     email: ''
-                }
+                },
+                setRoleDigLog: false,
+                userInfo: {},
+                rolesList: [],
+                selectRoleId: null
             }
         },
         created () {
@@ -311,6 +344,32 @@
                         message: '已取消删除'
                     });
                 });
+            },
+           async setRolesButton (item) {
+                console.log(item)
+                this.userInfo = item
+                let res = await this.$axios.get('roles')
+                console.log(res)
+               this.rolesList = res.data.data
+                this.setRoleDigLog = true
+            },
+            async saveRoleInfoButton () {
+                console.log(this.selectRoleId)
+                if (!this.selectRoleId) {
+                    return this.$message.error('请选择要分配的角色')
+                }
+                console.log(this.userInfo.id)
+                let {data: res} = await this.$axios.put(`users/${this.userInfo.id}/role`, {rid: this.selectRoleId})
+                if (res.meta.status != 200) {
+                   return  this.$message.error(res.meta.msg)
+                }
+                this.$message.success(res.meta.msg)
+                this.initUserList()
+                this.setRoleDigLog = false
+            },
+            closeSetRolesDiaLog () {
+                this.selectRoleId = null
+                this.userInfo = {}
             }
         }
     }

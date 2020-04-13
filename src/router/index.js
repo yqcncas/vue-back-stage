@@ -4,6 +4,10 @@ import Login from '../views/Login/Login'
 const Home = () => import('../views/Home/Home')
 const Welcome = () => import('../components/Welcome')
 const Users = () => import('../components/User/Users')
+const Power = () => import('../components/Power/Power')
+const Roles = () => import('../components/Roles/Roles')
+const Cate = () => import('../components/Goods/Cate')
+
 Vue.use(VueRouter)
 
 const routes = [
@@ -27,6 +31,21 @@ const routes = [
         path: "users",
         name: 'Users',
         component: Users
+      },
+      {
+        path: "rights",
+        name: 'Power',
+        component: Power
+      },
+      {
+        path: "roles",
+        name: 'Roles',
+        component: Roles
+      },
+      {
+        path: "categories",
+        name: 'Cate',
+        component: Cate
       }
     ]
   },
