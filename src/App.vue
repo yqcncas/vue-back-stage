@@ -24,4 +24,7 @@
   .el-pagination{
     margin-top: 15px;
   }
+  .ql-editor{
+    min-height: 300px !important;
+  }
 </style>
